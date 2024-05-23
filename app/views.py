@@ -19,8 +19,23 @@ class Homepage(APIView):
 
         serializer = Destinationserializer(destinations, many=True)
         return Response(serializer.data)
+    
+class Sidebar(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self,request,data=None):
+        categoies_list={'family':'FT',
+                        'luxury':'LT',
+                        'camping':'camping'}
+        category=categoies_list.get(data)
+        if data==None:
+            dest=Destination.objects.all()
+        else:
+            dest=Destination.objects.filter(category__name__icontains=category)
+        serializer = Destinationserializer(dest,many=True)
+        return Response(serializer.data)
 
 class PopularDestination(APIView):
+    permission_classes=[IsAuthenticated]
     def get(self, request):
         permission_classes=[IsAuthenticated]
         destinations = Destination.objects.filter(popular=True)
@@ -65,6 +80,7 @@ class Search(APIView):
         
         
 class Categoryview(APIView):
+    
     def get(self,request):
         queryset=Category.objects.all()
         serializer=Categoryserializer(queryset,many=True)

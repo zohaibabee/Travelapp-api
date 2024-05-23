@@ -10,6 +10,10 @@ urlpatterns = [
     path('booknow/<int:id>/',views.Booknow.as_view()),
     path('bookingdetail/',views.Bookdetail.as_view()),
     path('checkout/',views.Checkout.as_view()),
+    path('sidebar/<str:data>/',views.Sidebar.as_view()),
+    path('sidebar/',views.Sidebar.as_view()),
+    
+    
     
     
     # path('searchable/',views.Searchable.as_view()),
