@@ -31,13 +31,13 @@ class Registration(APIView):
             name=serializer.validated_data['name']
             otp=random.randint(1000,9999)
             print(otp)
-            user=User.objects.create_user(email=email,password=password,name=name,otp=otp)
-            data={
-                'subject':'Reset Password Link',
-                'body':f'This is your one time password {otp}',
-                'to_email':[email]
-            }
-            Util.send_email(data)
+            # user=User.objects.create_user(email=email,password=password,name=name,otp=otp)
+            # data={
+            #     'subject':'Reset Password Link',
+            #     'body':f'This is your one time password {otp}',
+            #     'to_email':[email]
+            # }
+            # Util.send_email(data)
             
             return Response({'msg':'check your email'})
         else:
