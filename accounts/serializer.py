@@ -3,7 +3,7 @@ from rest_framework import serializers
 from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
 from django.utils.encoding import smart_str,force_bytes
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-
+from .utils import Util
 
 
 class Registrationserailizer(serializers.ModelSerializer):
@@ -21,7 +21,7 @@ class Registrationserailizer(serializers.ModelSerializer):
             password=attrs.get['password']
             password2=attrs.get['password2']
             if password != password2:
-                raise serializers.ValidationError('PAssword is not match')
+                raise serializers.ValidationError('Password is not match')
             return attrs
             
 class Verifyotpserializer(serializers.Serializer):
@@ -80,10 +80,17 @@ class Sendemailserializer(serializers.Serializer):
         email=attrs.get('email')
         if User.objects.filter(email=email).exists():
             user=User.objects.get(email=email)
+            # print(user)
             uid=urlsafe_base64_encode(force_bytes(user.id))
             passwordtoken=PasswordResetTokenGenerator().make_token(user)
             link='http://localhost:300/user/reset/'+uid+'/'+passwordtoken
             print(link)
+            # data={
+            #     'subject':'Reset Password Link',
+            #     'body':'Click on link to reset the password'+link,
+            #     'to_email':[user]
+            # }
+            # Util.send_email(data)
             
         else:
             raise serializers.ValidationError('user is not register')

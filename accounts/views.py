@@ -9,6 +9,7 @@ import random
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
+from .utils import Util
 
 # Create your views here.
 from rest_framework import status
@@ -23,19 +24,24 @@ def get_tokens_for_user(user):
 
 class Registration(APIView):
     def post(self,request):
-        serailizer=Registrationserailizer(data=request.data)
-        if serailizer.is_valid():
-            email=serailizer.validated_data['email']
-            password=serailizer.validated_data['password']  # Fixed typo, changed () to []
-            name=serailizer.validated_data['name']
+        serializer=Registrationserailizer(data=request.data)
+        if serializer.is_valid():
+            email=serializer.validated_data['email']
+            password=serializer.validated_data['password']  # Fixed typo, changed () to []
+            name=serializer.validated_data['name']
             otp=random.randint(1000,9999)
             print(otp)
             user=User.objects.create_user(email=email,password=password,name=name,otp=otp)
-            email_from=settings.EMAIL_HOST
-            send_mail('YOUR OTP FOR REGISTRATION',f'This is your one time password {otp}',email_from,[email])
+            data={
+                'subject':'Reset Password Link',
+                'body':f'This is your one time password {otp}',
+                'to_email':[email]
+            }
+            Util.send_email(data)
+            
             return Response({'msg':'check your email'})
         else:
-            return Response(serailizer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             
             
